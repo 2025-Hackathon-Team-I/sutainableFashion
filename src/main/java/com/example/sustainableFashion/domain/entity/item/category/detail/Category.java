@@ -1,27 +1,23 @@
-package com.example.sustainableFashion.domain.entity.user;
+package com.example.sustainableFashion.domain.entity.item.category.detail;
+
 
 import com.example.sustainableFashion.global.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+
 @Entity
-@Table(name = "user")
+@Table(name = "category")
 @Builder
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class User extends BaseEntity {
+public class Category extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "email")
-    private String email;
-
-    @Column(name = "nickname")
-    private String nickname;
-
-    @Column(name = "phone_number")
-    private String phoneNumber;
+    @Column(name = "content")
+    private String content;
 }
