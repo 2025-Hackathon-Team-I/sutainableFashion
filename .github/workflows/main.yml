@@ -31,12 +31,10 @@ jobs:
           distribution: 'temurin'
 
       # 애플리케이션 설정 파일 생성 (base64 디코딩 방식)
-      - name: Generate application.yml and profiles
+      - name: Generate application.yml from base64 secret
         run: |
           mkdir -p ./src/main/resources
-          cd ./src/main/resources
-          touch ./application.yml
-          echo "${{ secrets.APPLICATION }}" > ./application.yml
+          echo "${{ secrets.APPLICATION }}" | base64 -d > ./src/main/resources/application.yml
 
       # Gradle 실행 권한 부여
       - name: Grant execute permission for gradlew
