@@ -20,6 +20,10 @@ jobs:
       contents: read
       packages: write
 
+    env:
+      AWS_ACCESS_KEY: ${{ secrets.TEST_CICD_ACCESS_KEY }}
+      AWS_SECRET_KEY: ${{ secrets.TEST_CICD_SECRET_KEY }}
+
     steps:
       - uses: actions/checkout@v4
 
