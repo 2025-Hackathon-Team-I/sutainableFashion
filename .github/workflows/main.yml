@@ -35,7 +35,6 @@ jobs:
         run: |
           mkdir -p ./src/main/resources
           echo "${{ secrets.APPLICATION }}" | base64 --decode > ./src/main/resources/application.yml
-          echo "${{ secrets.PROD }}" | base64 --decode > ./src/main/resources/application-prod.yml
 
       # Gradle 실행 권한 부여
       - name: Grant execute permission for gradlew
