@@ -42,9 +42,9 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
 
-      # 빌드
-      - name: Build
-        run: ./gradlew bootJar -x test
+      # 빌드 및 테스트
+      - name: Build and Test
+        run: ./gradlew bootJar test
 
       # zip 압축 (배포용)
       - name: Make zip file
