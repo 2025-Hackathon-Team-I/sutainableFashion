@@ -13,17 +13,5 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
 
-cloud:
-  aws:
-    s3:
-      bucket: test-gitget-deploy-bucket
-    region:
-      static: ${AWS_REGION}
-    stack:
-      auto: false
-    credentials:
-      access-key: ${AWS_ACCESS_KEY}
-      secret-key: ${AWS_SECRET_KEY}
-
 server:
   address: 0.0.0.0
