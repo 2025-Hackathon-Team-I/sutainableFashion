@@ -20,9 +20,6 @@ public class Item extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "image_url")
-    private String imageUrl;
-
     @Column(name = "name")
     private String name;
 
