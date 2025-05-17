@@ -17,11 +17,13 @@ cloud:
   aws:
     s3:
       bucket: test-gitget-deploy-bucket
-    stack.auto: false
-    region.static: ap-southeast-2
+    region:
+      static: ${AWS_REGION}
+    stack:
+      auto: false
     credentials:
-      accessKey: ${AWS_ACCESS_KEY}
-      secretKey: ${AWS_SECRET_KEY}
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
 
 server:
   address: 0.0.0.0

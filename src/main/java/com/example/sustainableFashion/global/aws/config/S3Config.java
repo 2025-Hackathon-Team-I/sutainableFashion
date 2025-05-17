@@ -13,9 +13,7 @@ public class S3Config {
 
     private final String accessKey = System.getenv("AWS_ACCESS_KEY");
     private final String secretKey = System.getenv("AWS_SECRET_KEY");
-
-    @Value("${spring.cloud.aws.region.static}")
-    private String region;
+    private final String region = System.getenv("AWS_REGION");
 
     @Bean
     public S3Client S3Client() {

@@ -25,8 +25,7 @@ public class FileUploadController {
 
     private final S3Client s3Client;
 
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
+    private final String bucket = System.getenv("AWS_BUCKET");
 
     @PostMapping
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
