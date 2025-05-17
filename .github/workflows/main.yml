@@ -1,23 +1,17 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
-# AWS 관련 값 변수로 설정
 env:
   AWS_REGION: ap-southeast-2
   AWS_S3_BUCKET: test-gitget-deploy-bucket
   AWS_CODE_DEPLOY_APPLICATION: Test-GitGet-Application-CD
   AWS_CODE_DEPLOY_GROUP: Test-GitGet-Deployment-Group
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   deploy:
     if: github.event_name == 'push'
@@ -25,6 +19,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+
     steps:
       - uses: actions/checkout@v4
 
@@ -35,32 +30,28 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # 공개되면 안되는 정보를 담은 .yml 파일을 생성
-      - name: make application.yml
+      # 애플리케이션 설정 파일 생성 (base64 디코딩 방식)
+      - name: Generate application.yml and profiles
         run: |
           mkdir -p ./src/main/resources
-          cd ./src/main/resources
-          touch ./application.yml
-          touch ./application-common.yml
-          touch ./application-prod.yml
-          echo "${{ secrets.APPLICATION }}" > ./application.yml
-          echo "${{ secrets.COMMON }}" > ./application-common.yml
-          echo "${{ secrets.PROD }}" > ./application-prod.yml
+          echo "${{ secrets.APPLICATION }}" | base64 --decode > ./src/main/resources/application.yml
+          echo "${{ secrets.PROD }}" | base64 --decode > ./src/main/resources/application-prod.yml
 
-      # 권한 부여
+      # Gradle 실행 권한 부여
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
         shell: bash
 
+      # 빌드 및 테스트
       - name: Build and Test
         run: ./gradlew bootJar test
 
-      # 빌드 파일을 zip 형식으로 압축 - S3에서는 jar 저장이 안되기 때문에 zip으로 생성
+      # zip 압축 (배포용)
       - name: Make zip file
         run: zip -r ./$GITHUB_SHA.zip .
         shell: bash
 
-      # AWS 권한
+      # AWS 인증 설정
       - name: AWS credential 설정
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -68,10 +59,15 @@ jobs:
           aws-access-key-id: ${{ secrets.TEST_CICD_ACCESS_KEY }}
           aws-secret-access-key: ${{ secrets.TEST_CICD_SECRET_KEY }}
 
-      # S3 버킷에 빌드파일(zip 파일)을 업로드
+      # S3 업로드
       - name: Upload to S3
-        run: aws s3 cp --region ap-southeast-2 ./$GITHUB_SHA.zip s3://$AWS_S3_BUCKET/$GITHUB_SHA.zip
+        run: aws s3 cp --region ${{ env.AWS_REGION }} ./$GITHUB_SHA.zip s3://$AWS_S3_BUCKET/$GITHUB_SHA.zip
 
-      # EC2 인스턴스에 S3에 저장되어 있던 zip 파일을 받아와 배포 시작
+      # CodeDeploy로 EC2 배포 시작
       - name: EC2에 배포
-        run: aws deploy create-deployment --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }} --s3-location bucket=$AWS_S3_BUCKET,key=$GITHUB_SHA.zip,bundleType=zip
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }} \
+            --s3-location bucket=$AWS_S3_BUCKET,key=$GITHUB_SHA.zip,bundleType=zip
