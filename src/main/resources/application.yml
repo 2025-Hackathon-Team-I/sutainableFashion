@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/hackathon
-    username: demo
-    password: 1234
-    #driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://test-database1.cx0g286gcbri.ap-southeast-2.rds.amazonaws.com:3306/t_fashion?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: Qwe123456789!
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -12,6 +12,16 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
     show-sql: true
+
+cloud:
+  aws:
+    s3:
+      bucket: test-gitget-deploy-bucket
+    stack.auto: false
+    region.static: ap-southeast-2
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY}
+      secretKey: ${AWS_SECRET_KEY}
 
 server:
   address: 0.0.0.0
