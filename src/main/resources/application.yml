@@ -22,3 +22,15 @@ spring:
     properties:
       hibernate:
         format_sql: true # 출력되는 SQL 쿼리를 보기 좋게 포맷팅
+
+  cloud: # S3 설정
+    aws:
+      credentials:
+        access-key: "IAM Access Key"
+        secret-key: "IAM Secret Key"
+      region:
+        static: ap-northeast-2
+      s3:
+        bucket: "버킷 이름"
+      stack:
+        auto: false
